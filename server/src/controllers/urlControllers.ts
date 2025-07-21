@@ -32,7 +32,7 @@ export const getUrl = async (req: Request, res: Response) => {
     try {
         const urls = await Url.find()
         if (!urls || urls.length === 0) {
-            res.status(404).json("No urls found!")
+            res.status(404).json("No url found!")
         }
 
         return res.status(200).json({
@@ -48,6 +48,8 @@ export const getUrl = async (req: Request, res: Response) => {
     }
 
 }
+
+
 
 export const updateByUrl = async (req: Request, res: Response) => {
 
@@ -109,5 +111,26 @@ export const deleteByUrl = async (req: Request, res: Response) => {
     }
 
 
+
+}
+
+
+export const redirectToOriginalUrl = async (req: Request, res: Response) => {
+
+
+    const { shortCode } = req.params
+
+    try {
+        const foundUrl = await Url.findOne({ shortCode })
+        if (!foundUrl) {
+            res.status(404).json({ errorMessage: "Short url not found." })
+        }
+        return res.redirect(foundUrl?.url as string);
+
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ errorMessage: error.message })
+        }
+    }
 
 }
